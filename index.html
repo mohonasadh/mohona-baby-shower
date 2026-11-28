@@ -143,9 +143,14 @@ body.opened .hero-copy > :nth-child(6) { animation-delay: .85s; }
   .cards { grid-template-columns: minmax(0, 340px); }
   .date-block .big { font-size: 3.2rem; }
 }
+.music-control { position: fixed; right: 16px; bottom: 16px; z-index: 60; border: 1px solid var(--gold-line); background: rgba(232,226,212,.92); color: var(--ink); border-radius: 999px; padding: 8px 14px; font-family: var(--font-body); cursor: pointer; box-shadow: 0 6px 18px rgba(77,44,14,.15); }
 </style>
 
 <script>document.documentElement.classList.add('js');</script>
+<audio id="bgMusic" preload="auto" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
 <div class="envelope-screen" id="envelope">
   <div class="env-kicker"><small>Beekshan &amp; Mohona invite you</small>A letter for you</div>
   <button class="env-btn" id="envBtn" type="button" aria-label="Open the invitation">
@@ -253,6 +258,12 @@ as we extend our humble invitation through this card.</p>
   btn.addEventListener('click', function () {
     if (scr.classList.contains('open')) return;
     scr.classList.add('open');
+    var music = document.getElementById('bgMusic');
+    if (music) {
+      music.volume = 0.55;
+      var playPromise = music.play();
+      if (playPromise && playPromise.catch) playPromise.catch(function () {});
+    }
     setTimeout(function () { scr.classList.add('leaving'); }, 2100);
     setTimeout(function () { document.body.classList.add('opened'); }, 2400);
     setTimeout(function () { scr.hidden = true; }, 3300);
@@ -281,6 +292,23 @@ as we extend our humble invitation through this card.</p>
       document.body.appendChild(p);
     }
   }
+})();
+
+(function () {
+  var music = document.getElementById('bgMusic');
+  var control = document.getElementById('musicControl');
+  if (!music || !control) return;
+  control.addEventListener('click', function () {
+    if (music.paused) {
+      music.play().catch(function () {});
+      control.textContent = '♫ Music';
+      control.setAttribute('aria-label', 'Pause music');
+    } else {
+      music.pause();
+      control.textContent = '♫ Play music';
+      control.setAttribute('aria-label', 'Play music');
+    }
+  });
 })();
 </script>
 
